@@ -42,21 +42,55 @@ def load_movies():
 
     Movie.query.delete()
 
+    # Make empty list of urls
+    url_list = [];
+
     for row in open("seed_data/u.item"):
-        row = row.rstrip().split("|")
-        movie_id = row[0]
-        title = row[1]
-        if title[-1] == ")" and title[-6] == "(":
-            title = title[:-7]
-        released_at = datetime.strptime(row[2], "%d-%b-%Y")
-        imdb_url = row[3]
+        row = row.rstrip().split("|")             
+        
+        # If current url is in list, move on next row in u.item
+        if row[4] in url_list:
+            continue
 
-        movie = Movie(movie_id=movie_id,
-                      title=title,
-                      released_at=released_at,
-                      imdb_url=imdb_url)
+        # get list of objects
+        # get imdb_url for each object
+        # encode each imdb url
+        # check if row[4] is equal to any imdb url
 
-        db.session.add(movie)
+        
+
+        # movie_objects = Movie.query.all()
+        # for movie_object in movie_objects:
+        #     url = movie_object.imdb_url
+            # url = url.encode('utf-8')
+            # url_list.append(url)
+
+        # if current url is NOT in list, do the following steps
+        else:
+            movie_id = row[0]
+            title = row[1]
+
+            # Removes year from movie title
+            if title[-1] == ")" and title[-6] == "(" and title[-5:-1].isdigit():
+                title = title[:-7]
+
+            if row[2]:
+                released_at = datetime.strptime(row[2], '%d-%b-%Y')
+            else:
+                released_at = None
+
+            imdb_url = row[4]
+
+            # Encode url and append to url_list
+            imdb_url = imdb_url.encode('utf-8')
+            url_list.append(imdb_url)
+
+            movie = Movie(movie_id=movie_id,
+                          title=title,
+                          released_at=released_at,
+                          imdb_url=imdb_url)
+
+            db.session.add(movie)
 
     db.session.commit()
 

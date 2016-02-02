@@ -23,6 +23,8 @@ class User(db.Model):
     age = db.Column(db.Integer, nullable=True)
     zipcode = db.Column(db.String(15), nullable=True)
 
+    
+
     def __repr__(self):
         """Show info about user"""
 
@@ -37,9 +39,9 @@ class Movie(db.Model):
     __tablename__ = "movies"
 
     movie_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    title = db.Column(db.String(64))
+    title = db.Column(db.String(64), nullable=False)
     released_at = db.Column(db.DateTime)
-    imdb_url = db.Column(db.String(200), unique=True)
+    imdb_url = db.Column(db.String(200), nullable=False, unique=True)
 
     def __repr__(self):
         """Show info about movie"""
@@ -55,10 +57,10 @@ class Rating(db.Model):
     rating_id = db.Column(db.Integer, primary_key=True)
     movie_id = db.Column(db.Integer, db.ForeignKey('movies.movie_id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
-    score = db.Column(db.Integer)
+    score = db.Column(db.Integer, nullable=False)
 
-    mov = db.relationship('Movie')
-    usr = db.relationship('User')
+    # mov = db.relationship('Movie')
+    # usr = db.relationship('User')
 
     def __repr__(self):
         """Show ratings for movie"""
