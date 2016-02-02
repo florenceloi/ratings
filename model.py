@@ -57,6 +57,9 @@ class Rating(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     score = db.Column(db.Integer)
 
+    mov = db.relationship('Movie')
+    usr = db.relationship('User')
+
     def __repr__(self):
         """Show ratings for movie"""
 
