@@ -105,6 +105,7 @@ def load_ratings():
     for row in open("seed_data/u.data"):
         row = row.rstrip()
         user_id, movie_id, score, timestamp = row.split("\t")
+        print user_id, "and", movie_id
 
         rating = Rating(user_id=user_id,
                         movie_id=movie_id,
