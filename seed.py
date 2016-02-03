@@ -20,8 +20,7 @@ def load_users():
     User.query.delete()
 
     # Read u.user file and insert data
-    filename = open("seed_data/u.user")
-    for row in filename:
+    for row in open("seed_data/u.user"):
         row = row.rstrip()
         user_id, age, gender, occupation, zipcode = row.split("|")
 
@@ -35,8 +34,6 @@ def load_users():
     # Once we're done, we should commit our work
     db.session.commit()
 
-    filename.close()
-
 
 def load_movies():
     """Load movies from u.item into database."""
@@ -48,26 +45,12 @@ def load_movies():
     # Make empty list of urls
     url_list = [];
 
-    filename = open("seed_data/u.item")
-    for row in filename:
+    for row in open("seed_data/u.item"):
         row = row.rstrip().split("|")             
         
         # If current url is in list, move on next row in u.item
         if row[4] in url_list:
             continue
-
-        # get list of objects
-        # get imdb_url for each object
-        # encode each imdb url
-        # check if row[4] is equal to any imdb url
-
-        
-
-        # movie_objects = Movie.query.all()
-        # for movie_object in movie_objects:
-        #     url = movie_object.imdb_url
-            # url = url.encode('utf-8')
-            # url_list.append(url)
 
         # if current url is NOT in list, do the following steps
         else:
@@ -86,7 +69,6 @@ def load_movies():
             imdb_url = row[4]
 
             # Encode url and append to url_list
-            imdb_url = imdb_url.encode('utf-8')
             url_list.append(imdb_url)
 
             movie = Movie(movie_id=movie_id,
@@ -98,7 +80,6 @@ def load_movies():
 
     db.session.commit()
 
-    filename.close()
 
 def load_ratings():
     """Load ratings from u.data into database."""
@@ -107,8 +88,7 @@ def load_ratings():
 
     Rating.query.delete()
 
-    filename = open("seed_data/u.data")
-    for row in filename:
+    for row in open("seed_data/u.data"):
         row = row.rstrip()
         user_id, movie_id, score, timestamp = row.split("\t")
 
@@ -120,7 +100,6 @@ def load_ratings():
 
     db.session.commit()
 
-    filename.close()
 
 def set_val_user_id():
     """Set value for the next user_id after seeding database"""
