@@ -42,41 +42,29 @@ def load_movies():
 
     Movie.query.delete()
 
-    # Make empty list of urls
-    url_list = [];
-
     for row in open("seed_data/u.item"):
         row = row.rstrip().split("|")             
         
-        # If current url is in list, move on next row in u.item
-        if row[4] in url_list:
-            continue
+        movie_id = row[0]
+        title = row[1]
 
-        # if current url is NOT in list, do the following steps
+        # Removes year from movie title
+        if title[-1] == ")" and title[-6] == "(" and title[-5:-1].isdigit():
+            title = title[:-7]
+
+        if row[2]:
+            released_at = datetime.strptime(row[2], '%d-%b-%Y')
         else:
-            movie_id = row[0]
-            title = row[1]
+            released_at = None
 
-            # Removes year from movie title
-            if title[-1] == ")" and title[-6] == "(" and title[-5:-1].isdigit():
-                title = title[:-7]
+        imdb_url = row[4]
 
-            if row[2]:
-                released_at = datetime.strptime(row[2], '%d-%b-%Y')
-            else:
-                released_at = None
+        movie = Movie(movie_id=movie_id,
+                      title=title,
+                      released_at=released_at,
+                      imdb_url=imdb_url)
 
-            imdb_url = row[4]
-
-            # Encode url and append to url_list
-            url_list.append(imdb_url)
-
-            movie = Movie(movie_id=movie_id,
-                          title=title,
-                          released_at=released_at,
-                          imdb_url=imdb_url)
-
-            db.session.add(movie)
+        db.session.add(movie)
 
     db.session.commit()
 
@@ -91,6 +79,10 @@ def load_ratings():
     for row in open("seed_data/u.data"):
         row = row.rstrip()
         user_id, movie_id, score, timestamp = row.split("\t")
+
+        user_id = int(user_id)
+        movie_id = int(movie_id)
+        score = int(score)
 
         rating = Rating(user_id=user_id,
                         movie_id=movie_id,
