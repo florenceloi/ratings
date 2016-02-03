@@ -20,7 +20,8 @@ def load_users():
     User.query.delete()
 
     # Read u.user file and insert data
-    for row in open("seed_data/u.user"):
+    filename = open("seed_data/u.user")
+    for row in filename:
         row = row.rstrip()
         user_id, age, gender, occupation, zipcode = row.split("|")
 
@@ -34,6 +35,8 @@ def load_users():
     # Once we're done, we should commit our work
     db.session.commit()
 
+    filename.close()
+
 
 def load_movies():
     """Load movies from u.item into database."""
@@ -45,7 +48,8 @@ def load_movies():
     # Make empty list of urls
     url_list = [];
 
-    for row in open("seed_data/u.item"):
+    filename = open("seed_data/u.item")
+    for row in filename:
         row = row.rstrip().split("|")             
         
         # If current url is in list, move on next row in u.item
@@ -94,6 +98,7 @@ def load_movies():
 
     db.session.commit()
 
+    filename.close()
 
 def load_ratings():
     """Load ratings from u.data into database."""
@@ -102,10 +107,10 @@ def load_ratings():
 
     Rating.query.delete()
 
-    for row in open("seed_data/u.data"):
+    filename = open("seed_data/u.data")
+    for row in filename:
         row = row.rstrip()
         user_id, movie_id, score, timestamp = row.split("\t")
-        print user_id, "and", movie_id
 
         rating = Rating(user_id=user_id,
                         movie_id=movie_id,
@@ -115,6 +120,7 @@ def load_ratings():
 
     db.session.commit()
 
+    filename.close()
 
 def set_val_user_id():
     """Set value for the next user_id after seeding database"""
