@@ -38,7 +38,7 @@ def sign_in():
 
 	return render_template("sign-in_form.html")
 
-@app.route('/signed-in', method=["POST"])
+@app.route('/signed-in', methods=["POST"])
 def check_user_existence():
 	"""Check to see if user is in database, and if not, create user."""
 
@@ -55,15 +55,30 @@ def check_user_existence():
 	email_list = []
 
 	# Encode each email in table list of tuples and add to empty email_list
-	for email in emails:
-		current_email = email[0].encode('utf-8')
+	if not email_list:
+		current_email = emails[0][0].encode('utf-8')
 		email_list.append(current_email)
+	elif email_list:
+		for email in emails[1:]:
+			current_email = email[0].encode('utf-8')
+			email_list.append(current_email)
+
+	print email_list, "*************************"
 
 	# If email is not in the email list, then we insert new user into table
 	if form_email not in email_list:
 		QUERY = "INSERT INTO users (email, password) VALUES (:email, :password)"
 		db.session.execute(QUERY, {'email': form_email, 'password': form_password})
 		db.session.commit()
+		return redirect("/")
+
+	else:
+		QUERY = "SELECT password FROM users WHERE email = :email"
+		password = db.session.execute(QUERY, {'email': form_email}).fetchone()
+		if form_password == password:
+			return redirect("/")
+		# else:
+			# use JS to prevent form submission
 
 
 if __name__ == "__main__":
