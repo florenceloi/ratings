@@ -42,43 +42,75 @@ def sign_in():
 def check_user_existence():
 	"""Check to see if user is in database, and if not, create user."""
 
-	#get username from form
+	# get username from form
 	form_email = request.form.get("email")
-	#get password from form
+	# get password from form
 	form_password = request.form.get("password")
 
-	# Making a list of email tuples from user table
-	QUERY = "SELECT email FROM users"
-	cursor = db.session.execute(QUERY)
-	emails = cursor.fetchall()
+	# get user object whose email matches form's email
+	user = User.query.filter(User.email == form_email).first()
 
-	email_list = []
-
-	# Encode each email in table list of tuples and add to empty email_list
-	if not email_list:
-		current_email = emails[0][0].encode('utf-8')
-		email_list.append(current_email)
-	elif email_list:
-		for email in emails[1:]:
-			current_email = email[0].encode('utf-8')
-			email_list.append(current_email)
-
-	print email_list, "*************************"
-
-	# If email is not in the email list, then we insert new user into table
-	if form_email not in email_list:
-		QUERY = "INSERT INTO users (email, password) VALUES (:email, :password)"
-		db.session.execute(QUERY, {'email': form_email, 'password': form_password})
-		db.session.commit()
+	# if email and password combo matches, logs in successfully
+	if user and user.password == form_password:
+		
+		
+		flash("You've successfully logged in!")
 		return redirect("/")
 
+	elif not user or user.password != form_password:
+		flash("Invalid email or password. Please register if you do not have an account.")
+		return redirect("/sign-in")
+
+	
 	else:
-		QUERY = "SELECT password FROM users WHERE email = :email"
-		password = db.session.execute(QUERY, {'email': form_email}).fetchone()
-		if form_password == password:
-			return redirect("/")
-		# else:
-			# use JS to prevent form submission
+		return redirect("/sign-in")
+
+
+
+
+
+
+	# # Making a list of email tuples from user table
+	# QUERY = "SELECT email FROM users"
+	# cursor = db.session.execute(QUERY)
+	# emails = cursor.fetchall()
+
+	# email_list = []
+	# emails_length = len(emails)
+	# print emails_length, "---------------------------------------"
+	# counter = 0
+
+	# # Encode each email in table list of tuples and add to empty email_list
+	# while counter != emails_length:
+	# 	if not email_list:	# If email_list is empty
+	# 		current_email = emails[0][0].encode('utf-8')
+	# 		email_list.append(current_email)
+	# 		counter += 1
+	# 		print email_list
+	# 	elif email_list:	# Else, if email_list is not empty
+	# 		for email in emails[1:]:
+	# 			current_email = email[0].encode('utf-8')
+	# 			email_list.append(current_email)
+	# 			counter += 1
+
+	# print email_list, "*************************"
+
+	# # If email is not in the email list, then we insert new user into table
+	# if form_email not in email_list:
+	# 	QUERY = "INSERT INTO users (email, password) VALUES (:email, :password)"
+	# 	db.session.execute(QUERY, {'email': form_email, 'password': form_password})
+	# 	db.session.commit()
+	# 	return redirect("/")
+
+	# else:
+	# 	QUERY = "SELECT password FROM users WHERE email = :email"
+	# 	password = db.session.execute(QUERY, {'email': form_email}).fetchone()
+	# 	if form_password == password:
+	# 		return redirect("/")
+	# 	else:
+	# 		return redirect("/")
+	# 	# else:
+	# 		# use JS to prevent form submission
 
 
 if __name__ == "__main__":
@@ -92,3 +124,53 @@ if __name__ == "__main__":
     DebugToolbarExtension(app)
 
     app.run()
+
+
+
+
+
+
+
+# First attempt at adding new users and handling login/logout
+
+# # Making a list of email tuples from user table
+# 	QUERY = "SELECT email FROM users"
+# 	cursor = db.session.execute(QUERY)
+# 	emails = cursor.fetchall()
+
+# 	email_list = []
+# 	emails_length = len(emails)
+# 	print emails_length, "---------------------------------------"
+# 	counter = 0
+
+# 	# Encode each email in table list of tuples and add to empty email_list
+# 	while counter != emails_length:
+# 		if not email_list:	# If email_list is empty
+# 			current_email = emails[0][0].encode('utf-8')
+# 			email_list.append(current_email)
+# 			counter += 1
+# 			print email_list
+# 		elif email_list:	# Else, if email_list is not empty
+# 			for email in emails[1:]:
+# 				current_email = email[0].encode('utf-8')
+# 				email_list.append(current_email)
+# 				counter += 1
+
+# 	print email_list, "*************************"
+
+# 	# If email is not in the email list, then we insert new user into table
+# 	if form_email not in email_list:
+# 		QUERY = "INSERT INTO users (email, password) VALUES (:email, :password)"
+# 		db.session.execute(QUERY, {'email': form_email, 'password': form_password})
+# 		db.session.commit()
+# 		return redirect("/")
+
+# 	else:
+# 		QUERY = "SELECT password FROM users WHERE email = :email"
+# 		password = db.session.execute(QUERY, {'email': form_email}).fetchone()
+# 		if form_password == password:
+# 			return redirect("/")
+# 		else:
+# 			return redirect("/")
+# 		# else:
+# 			# use JS to prevent form submission

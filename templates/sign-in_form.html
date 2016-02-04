@@ -8,5 +8,12 @@
 	Password: <input type="password" name="password"><br><br>
 	<input type="submit">
 </form>
+<br>
+
+<p>
+	{% for message in get_flashed_messages() %}
+    	{{ message }} 
+	{% endfor %}
+</p>
 
 {% endblock %}
