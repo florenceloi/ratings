@@ -7,7 +7,6 @@ from flask_debugtoolbar import DebugToolbarExtension
 
 from model import connect_to_db, db, User, Rating, Movie
 
-
 app = Flask(__name__)
 
 # Required to use Flask sessions and the debug toolbar
@@ -32,6 +31,39 @@ def user_list():
 	users = User.query.all()
 
 	return render_template("user_list.html", users=users)
+
+@app.route('/sign-in')
+def sign_in():
+	"""Sign-in user."""
+
+	return render_template("sign-in_form.html")
+
+@app.route('/signed-in', method=["POST"])
+def check_user_existence():
+	"""Check to see if user is in database, and if not, create user."""
+
+	#get username from form
+	form_email = request.form.get("email")
+	#get password from form
+	form_password = request.form.get("password")
+
+	# Making a list of email tuples from user table
+	QUERY = "SELECT email FROM users"
+	cursor = db.session.execute(QUERY)
+	emails = cursor.fetchall()
+
+	email_list = []
+
+	# Encode each email in table list of tuples and add to empty email_list
+	for email in emails:
+		current_email = email[0].encode('utf-8')
+		email_list.append(current_email)
+
+	# If email is not in the email list, then we insert new user into table
+	if form_email not in email_list:
+		QUERY = "INSERT INTO users (email, password) VALUES (:email, :password)"
+		db.session.execute(QUERY, {'email': form_email, 'password': form_password})
+		db.session.commit()
 
 
 if __name__ == "__main__":
