@@ -33,11 +33,16 @@ def user_list():
 	return render_template("user_list.html", users=users)
 
 
-# @app.route('/{{ user.user_id }}')
-# def user_page():
-# 	"""Show page for single user."""
+@app.route('/users/<int:user_id>')
+def user_page(user_id):
+	"""Show page for single user."""
 
-# 	# user = 
+	user = User.query.filter(User.user_id == user_id).first()
+	
+	# list of movie-score tuples
+	movies_scores = db.session.query(Movie.title, Rating.score).join(Rating).filter(Rating.user_id == 1).order_by(Movie.title).all()
+
+	return render_template("user-page.html", user=user, movies_scores=movies_scores)
 
 
 @app.route('/sign-in')
@@ -50,9 +55,10 @@ def sign_in():
 def logout():
 	"""Logout user."""
 
-	del session["user_id"]
-
-	flash("You've successfully logged out!")
+	if session.get("user_id"):
+		del session["user_id"]
+		flash("You've successfully logged out!")
+	
 	return redirect('/')
 
 
