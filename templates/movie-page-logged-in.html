@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <h2>{{ movie.title }}</h2>
+    
+    <h3>Rate this movie</h3>
+	<form action="/movies/{{ movie.movie_id }}/rated" method="GET">
+		<select name="score">
+	    	<option value="1">1</option>
+		    <option value="2">2</option>
+		    <option value="3">3</option>
+		    <option value="4">4</option>
+		    <option value="5">5</option>
+	  	</select>
+		<input type="submit">
+	</form>
+	<br>
+
+    Ratings:<br>
+
+    <ul>
+      {% for rating in ratings %}
+        <li>
+            {{ rating[0] }}
+        </li>
+      {% endfor %}
+    </ul>
+
+{% endblock %}
